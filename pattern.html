@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Patterns Quick Reference</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header { text-align: center; color: white; margin-bottom: 40px; }
+        h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { font-size: 1.1em; opacity: 0.9; }
+        .category {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .category-title {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .creational { border-left: 5px solid #10b981; }
+        .behavioral { border-left: 5px solid #f59e0b; }
+        .structural { border-left: 5px solid #3b82f6; }
+        .pattern {
+            background: #f8fafc;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        .pattern:hover { transform: translateX(5px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .pattern-header {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .pattern-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #1e293b;
+        }
+        .toggle-icon {
+            font-size: 1.2em;
+            color: #64748b;
+            transition: transform 0.3s ease;
+        }
+        .toggle-icon.rotated { transform: rotate(90deg); }
+        .pattern-content {
+            margin-top: 12px;
+            display: block;
+        }
+        .pattern-desc {
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        .pattern-example {
+            background: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            color: #64748b;
+            border-left: 3px solid #cbd5e1;
+            margin-bottom: 12px;
+        }
+        .pattern-example strong { color: #334155; }
+        .pattern-code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 12px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            white-space: pre;
+            display: none;
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .badge-creational { background: #d1fae5; color: #065f46; }
+        .badge-behavioral { background: #fed7aa; color: #92400e; }
+        .badge-structural { background: #dbeafe; color: #1e40af; }
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .category { padding: 15px; }
+            .category-title { font-size: 1.4em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 Design Patterns Quick Reference</h1>
+            <p class="subtitle">23 GoF Design Patterns with Swift 5 examples — Click pattern name to show/hide code</p>
+        </header>
+
+        <!-- CREATIONAL PATTERNS -->
+        <div class="category creational">
+            <h2 class="category-title">
+                🏗️ Creational Patterns
+                <span class="badge badge-creational">5 Patterns</span>
+            </h2>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">1. Factory Method</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">Create on super class and create subclass as use</div>
+                    <div class="pattern-example"><strong>Example:</strong> Shipping => Transport <= Road, iOS => ReactNative <= Android</div>
+                    <pre class="pattern-code">protocol Transport { func deliver() }
+
+class Truck: Transport { func deliver() { print("Deliver by road") } }
+class Ship: Transport { func deliver() { print("Deliver by sea") } }
+
+class Logistics {
+    func createTransport() -> Transport { fatalError("Subclass responsibility") }
+    func planDelivery() {
+        let transport = createTransport()
+        transport.deliver()
+    }
+}
+
+class RoadLogistics: Logistics { override func createTransport() -> Transport { Truck() } }
+class SeaLogistics: Logistics { override func createTransport() -> Transport { Ship() } }
+
+// Usage
+RoadLogistics().planDelivery()  // Deliver by road</pre>
+                </div>
+            </div>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">2. Abstract Factory</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">Provide a client with a set of related or dependant objects, protocols and type with enum</div>
+                    <div class="pattern-example"><strong>Example:</strong> state enum for signup and login vc, view create, sofa, chair, coffeetable</div>
+                    <pre class="pattern-code">protocol Chair { func sit() }
+protocol Sofa { func lay() }
+
+protocol FurnitureFactory {
+    func createChair() -> Chair
+    func createSofa() -> Sofa
+}
+
+class ModernChair: Chair { func sit() { print("Modern chair sit") } }
+class ModernSofa: Sofa { func lay() { print("Modern sofa lay") } }
+
+class ModernFactory: FurnitureFactory {
+    func createChair() -> Chair { ModernChair() }
+    func createSofa() -> Sofa { ModernSofa() }
+}
+
+// Usage
+let factory: FurnitureFactory = ModernFactory()
+factory.createChair().sit()</pre>
+                </div>
+            </div>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">3. Builder</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">Return Same class. Make complex obj step by step</div>
+                    <div class="pattern-example"><strong>Example:</strong> SwiftUI View, House with pool, window, Realm and core data query</div>
+                    <pre class="pattern-code">class House {
+    var rooms = 0
+    var hasPool = false
+    var hasGarden = false
+}
+
+protocol HouseBuilder {
+    func reset()
+    func buildRooms(_ count: Int)
+    func buildPool()
+    func buildGarden()
+    func getHouse() -> House
+}
+
+class ConcreteBuilder: HouseBuilder {
+    private var house = House()
+    func reset() { house = House() }
+    func buildRooms(_ count: Int) { house.rooms = count }
+    func buildPool() { house.hasPool = true }
+    func buildGarden() { house.hasGarden = true }
+    func getHouse() -> House { house }
+}
+
+class Director {
+    private var builder: HouseBuilder?
+    func setBuilder(_ builder: HouseBuilder) { self.builder = builder }
+    func buildFullHouse() {
+        builder?.reset()
+        builder?.buildRooms(5)
+        builder?.buildPool()
+        builder?.buildGarden()
+    }
+}
+
+// Usage
+let director = Director()
+let builder = ConcreteBuilder()
+director.setBuilder(builder)
+director.buildFullHouse()
+let house = builder.getHouse()</pre>
+                </div>
+            </div>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">4. Prototype</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">Inheritate class and update variable data</div>
+                    <div class="pattern-example"><strong>Example:</strong> Clone existing objects with modified properties</div>
+                    <pre class="pattern-code">import Foundation
+
+class Sheep: NSCopying {
+    var name: String
+    var weight: Double
+    
+    init(name: String, weight: Double) {
+        self.name = name
+        self.weight = weight
+    }
+    
+    func copy(with zone: NSZone? = nil) -> Any {
+        Sheep(name: name, weight: weight)
+    }
+}
+
+// Usage
+let dolly = Sheep(name: "Dolly", weight: 50)
+let clone = (dolly.copy() as! Sheep)
+clone.name = "Molly"</pre>
+                </div>
+            </div>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">5. Singleton</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">Instantiate once only (Private init)</div>
+                    <div class="pattern-example"><strong>Example:</strong> Shared instances like UserDefaults, NetworkManager</div>
+                    <pre class="pattern-code">class NetworkManager {
+    static let shared = NetworkManager()
+    private init() {}
+    
+    func request() { print("Network request") }
+}
+
+// Usage
+NetworkManager.shared.request()</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- BEHAVIORAL PATTERNS -->
+        <div class="category behavioral">
+            <h2 class="category-title">
+                🔄 Behavioral Patterns
+                <span class="badge badge-behavioral">11 Patterns</span>
+            </h2>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">1. Chain of Responsibility</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">Pass handler</div>
+                    <div class="pattern-example"><strong>Example:</strong> API Call chain. Req, Auth, Validation, DB Call, filter, send</div>
+                    <pre class="pattern-code">protocol Handler {
+    var next: Handler? { get }
+    func handle(request: String)
+}
+
+class BaseHandler: Handler {
+    var next: Handler?
+    init(next: Handler? = nil) { self.next = next }
+    func handle(request: String) {
+        next?.handle(request: request)
+    }
+}
+
+class AuthHandler: BaseHandler {
+    override func handle(request: String) {
+        print("Authenticated")
+        super.handle(request: request)
+    }
+}
+
+class LoggerHandler: BaseHandler {
+    override func handle(request: String) {
+        print("Logged: \(request)")
+        super.handle(request: request)
+    }
+}
+
+class FinalHandler: BaseHandler {
+    override func handle(request: String) {
+        print("Processed: \(request)")
+    }
+}
+
+// Usage
+let chain = AuthHandler(next: LoggerHandler(next: FinalHandler()))
+chain.handle(request: "GET /data")</pre>
+                </div>
+            </div>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">2. Command</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">Turns a request into a stand-alone object that contains all information about the request.</div>
+                    <div class="pattern-example"><strong>Example:</strong> Save, print, cut, paste</div>
+                    <pre class="pattern-code">protocol Command {
+    func execute()
+}
+
+class LightOnCommand: Command {
+    func execute() { print("Light is ON") }
+}
+
+class LightOffCommand: Command {
+    func execute() { print("Light is OFF") }
+}
+
+class RemoteControl {
+    var command: Command?
+    func pressButton() { command?.execute() }
+}
+
+// Usage
+let remote = RemoteControl()
+remote.command = LightOnCommand()
+remote.pressButton()  // Light is ON</pre>
+                </div>
+            </div>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">3. Interpreter</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">Define a grammar for a simple language by defining an Expression class hierarchy and implementing an interpret operation.</div>
+                    <div class="pattern-example"><strong>Example:</strong> Evaluating mathematical expressions</div>
+                    <pre class="pattern-code">protocol Expression {
+    func interpret() -> Int
+}
+
+class NumberExpression: Expression {
+    let number: Int
+    init(number: Int) { self.number = number }
+    func interpret() -> Int { number }
+}
+
+class AddExpression: Expression {
+    let left: Expression
+    let right: Expression
+    init(left: Expression, right: Expression) {
+        self.left = left
+        self.right = right
+    }
+    func interpret() -> Int { left.interpret() + right.interpret() }
+}
+
+class SubtractExpression: Expression {
+    let left: Expression
+    let right: Expression
+    init(left: Expression, right: Expression) {
+        self.left = left
+        self.right = right
+    }
+    func interpret() -> Int { left.interpret() - right.interpret() }
+}
+
+// Usage
+let expression = AddExpression(
+    left: SubtractExpression(
+        left: NumberExpression(number: 10),
+        right: NumberExpression(number: 3)
+    ),
+    right: NumberExpression(number: 5)
+)
+print(expression.interpret())  // 12</pre>
+                </div>
+            </div>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">4. Iterator</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">Traverse through obj</div>
+                    <div class="pattern-example"><strong>Example:</strong> Loops, DFS, BFS, Map, Tree</div>
+                    <pre class="pattern-code">struct WordsCollection {
+    private var items = [String]()
+    
+    mutating func add(_ item: String) { items.append(item) }
+    
+    func makeIterator() -> Array<String>.Iterator {
+        items.makeIterator()
+    }
+}
+
+// Usage
+var collection = WordsCollection()
+collection.add("First")
+collection.add("Second")
+
+for word in collection {
+    print(word)
+}</pre>
+                </div>
+            </div>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">5. Mediator</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">Reduce chaotic dependencies between objects</div>
+                    <div class="pattern-example"><strong>Example:</strong> Airplane and Runway class needed ATC class, API Middleware to catch req</div>
+                    <pre class="pattern-code">protocol Mediator {
+    func send(message: String, from user: User)
+}
+
+class ChatRoom: Mediator {
+    private var users = [User]()
+    
+    func add(user: User) { users.append(user) }
+    
+    func send(message: String, from sender: User) {
+        for user in users where user !== sender {
+            user.receive(message)
+        }
+    }
+}
+
+class User {
+    let name: String
+    let mediator: Mediator
+    
+    init(name: String, mediator: Mediator) {
+        self.name = name
+        self.mediator = mediator
+    }
+    
+    func send(_ message: String) {
+        print("\(name) sends: \(message)")
+        mediator.send(message: message, from: self)
+    }
+    
+    func receive(_ message: String) {
+        print("\(name) received: \(message)")
+    }
+}
+
+// Usage
+let chat = ChatRoom()
+let alice = User(name: "Alice", mediator: chat)
+let bob = User(name: "Bob", mediator: chat)
+chat.add(user: alice)
+chat.add(user: bob)
+alice.send("Hi!")</pre>
+                </div>
+            </div>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">6. Memento</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">Save and restore previous state of obj (Originator, Caretaker)</div>
+                    <div class="pattern-example"><strong>Example:</strong> Undo in editing app</div>
+                    <pre class="pattern-code">class EditorMemento {
+    let text: String
+    init(text: String) { self.text = text }
+}
+
+class Editor {
+    private var text = ""
+    
+    func type(_ words: String) { text += words }
+    func save() -> EditorMemento { EditorMemento(text: text) }
+    func restore(from memento: EditorMemento) { text = memento.text }
+    
+    func content() -> String { text }
+}
+
+class History {
+    private var states = [EditorMemento]()
+    func push(_ memento: EditorMemento) { states.append(memento) }
+    func pop() -> EditorMemento? { states.popLast() }
+}
+
+// Usage
+let editor = Editor()
+let history = History()
+
+editor.type("Hello")
+history.push(editor.save())
+
+editor.type(" World")
+print(editor.content())  // Hello World
+
+if let saved = history.pop() {
+    editor.restore(from: saved)
+}
+print(editor.content())  // Hello</pre>
+                </div>
+            </div>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">7. Observer</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">One send and other subscribes</div>
+                    <div class="pattern-example"><strong>Example:</strong> Combine, Radio tower, Firebase</div>
+                    <pre class="pattern-code">class Subject {
+    private var observers = [Observer]()
+    
+    func attach(_ observer: Observer) { observers.append(observer) }
+    func detach(_ observer: Observer) { observers.removeAll { $0 === observer } }
+    func notify(_ message: String) {
+        observers.forEach { $0.update(message) }
+    }
+}
+
+protocol Observer: AnyObject {
+    func update(_ message: String)
+}
+
+class ConcreteObserver: Observer {
+    func update(_ message: String) {
+        print("Received: \(message)")
+    }
+}
+
+// Usage
+let subject = Subject()
+let observer = ConcreteObserver()
+subject.attach(observer)
+subject.notify("State changed")</pre>
+                </div>
+            </div>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">8. State</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">State change and obj behavior changes (state enum)</div>
+                    <div class="pattern-example"><strong>Example:</strong> Document states: Draft, Review, Published</div>
+                    <pre class="pattern-code">protocol TrafficLightState {
+    func next(light: TrafficLight)
+}
+
+class RedState: TrafficLightState {
+    func next(light: TrafficLight) {
+        print("Red → Green")
+        light.state = GreenState()
+    }
+}
+
+class GreenState: TrafficLightState {
+    func next(light: TrafficLight) {
+        print("Green → Yellow")
+        light.state = YellowState()
+    }
+}
+
+class YellowState: TrafficLightState {
+    func next(light: TrafficLight) {
+        print("Yellow → Red")
+        light.state = RedState()
+    }
+}
+
+class TrafficLight {
+    var state: TrafficLightState = RedState()
+    
+    func change() {
+        state.next(light: self)
+    }
+}
+
+// Usage
+let light = TrafficLight()
+light.change()  // Red → Green
+light.change()  // Green → Yellow
+light.change()  // Yellow → Red</pre>
+                </div>
+            </div>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">9. Strategy</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">Defines a family of algorithms</div>
+                    <div class="pattern-example"><strong>Example:</strong> Duck App with Fly and Quack (Different Protocols (add diff methods, call using delegate) to use as var)</div>
+                    <pre class="pattern-code">protocol PaymentStrategy {
+    func pay(amount: Double)
+}
+
+class CreditCardStrategy: PaymentStrategy {
+    func pay(amount: Double) { print("Paid $\(amount) with Credit Card") }
+}
+
+class PayPalStrategy: PaymentStrategy {
+    func pay(amount: Double) { print("Paid $\(amount) with PayPal") }
+}
+
+class ShoppingCart {
+    var strategy: PaymentStrategy?
+    
+    func checkout(amount: Double) {
+        strategy?.pay(amount: amount)
+    }
+}
+
+// Usage
+let cart = ShoppingCart()
+cart.strategy = CreditCardStrategy()
+cart.checkout(amount: 100)  // Paid $100.0 with Credit Card</pre>
+                </div>
+            </div>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">10. Template Method</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">Class which can use by many class as Template</div>
+                    <div class="pattern-example"><strong>Example:</strong> access req class inherited by camera, location, Microphone override if needed</div>
+                    <pre class="pattern-code">class DataProcessor {
+    final func process() {
+        loadData()
+        parseData()
+        saveData()
+    }
+    
+    func loadData() { print("Loading from default source") }
+    func parseData() { fatalError("Subclass must implement") }
+    func saveData() { print("Saving to database") }
+}
+
+class CSVProcessor: DataProcessor {
+    override func loadData() { print("Loading CSV file") }
+    override func parseData() { print("Parsing CSV format") }
+}
+
+class JSONProcessor: DataProcessor {
+    override func loadData() { print("Loading JSON file") }
+    override func parseData() { print("Parsing JSON format") }
+}
+
+// Usage
+CSVProcessor().process()</pre>
+                </div>
+            </div>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">11. Visitor</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">Visitor is a behavioral design pattern that lets you separate algorithms from the objects on which they operate. Allows you to add methods to classes of different types without much altering to those classes (Visitable(Visitor) => Visitor(methods))</div>
+                    <div class="pattern-example"><strong>Example:</strong> Tax on diff item, Export xml for geodata</div>
+                    <pre class="pattern-code">protocol Shape {
+    func accept(visitor: ShapeVisitor)
+}
+
+protocol ShapeVisitor {
+    func visit(circle: Circle)
+    func visit(square: Square)
+}
+
+class Circle: Shape {
+    func accept(visitor: ShapeVisitor) { visitor.visit(circle: self) }
+}
+
+class Square: Shape {
+    func accept(visitor: ShapeVisitor) { visitor.visit(square: self) }
+}
+
+class XMLExportVisitor: ShapeVisitor {
+    func visit(circle: Circle) { print("Export circle to XML") }
+    func visit(square: Square) { print("Export square to XML") }
+}
+
+// Usage
+let shapes: [Shape] = [Circle(), Square()]
+let exporter = XMLExportVisitor()
+shapes.forEach { $0.accept(visitor: exporter) }</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- STRUCTURAL PATTERNS -->
+        <div class="category structural">
+            <h2 class="category-title">
+                🏛️ Structural Patterns
+                <span class="badge badge-structural">7 Patterns</span>
+            </h2>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">1. Adapter</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">Incompatible interfaces to collaborate, class1 -> Adapter -> class2 (need other input then we have)</div>
+                    <div class="pattern-example"><strong>Example:</strong> xml to Json</div>
+                    <pre class="pattern-code">protocol JSONParser {
+    func parse(json: String) -> [String: Any]
+}
+
+class LegacyXMLParser {
+    func parseXML(_ xml: String) -> String { "Parsed XML" }
+}
+
+class XMLToJSONAdapter: JSONParser {
+    private let legacy = LegacyXMLParser()
+    
+    func parse(json: String) -> [String: Any] {
+        let xmlResult = legacy.parseXML(json)
+        return ["result": xmlResult]
+    }
+}
+
+// Usage
+let parser: JSONParser = XMLToJSONAdapter()
+let data = parser.parse(json: "<data/>")</pre>
+                </div>
+            </div>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">2. Bridge</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">Split a large class or a set of closely related classes into two separate hierarchies (use composition. Pass delegate(same method diff implementation based on delegates))</div>
+                    <div class="pattern-example"><strong>Example:</strong> Remote of tv/radio, post of fb/twitter, MultiPlatform app</div>
+                    <pre class="pattern-code">protocol Renderer {
+    func renderCircle(radius: Double)
+}
+
+class VectorRenderer: Renderer {
+    func renderCircle(radius: Double) { print("Vector circle \(radius)") }
+}
+
+class RasterRenderer: Renderer {
+    func renderCircle(radius: Double) { print("Raster pixels circle \(radius)") }
+}
+
+class Shape {
+    let renderer: Renderer
+    init(renderer: Renderer) { self.renderer = renderer }
+}
+
+class Circle: Shape {
+    func draw(radius: Double) {
+        renderer.renderCircle(radius: radius)
+    }
+}
+
+// Usage
+let vectorCircle = Circle(renderer: VectorRenderer())
+vectorCircle.draw(radius: 5)  // Vector circle 5.0</pre>
+                </div>
+            </div>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">3. Composite</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">Compose objects into tree structures and then work with these structures as if they were individual objects. (Tree Structure)</div>
+                    <div class="pattern-example"><strong>Example:</strong> go to last to get data. VC=apply theme to Subviews, Box of products, Army command chain</div>
+                    <pre class="pattern-code">protocol Graphic {
+    func draw()
+}
+
+class Dot: Graphic {
+    func draw() { print("Draw dot") }
+}
+
+class CircleGraphic: Graphic {
+    func draw() { print("Draw circle") }
+}
+
+class CompoundGraphic: Graphic {
+    private var children = [Graphic]()
+    
+    func add(_ child: Graphic) { children.append(child) }
+    func remove(_ child: Graphic) { children.removeAll { $0 === child } }
+    
+    func draw() {
+        print("Drawing compound:")
+        children.forEach { $0.draw() }
+    }
+}
+
+// Usage
+let compound = CompoundGraphic()
+compound.add(Dot())
+compound.add(CircleGraphic())
+compound.draw()</pre>
+                </div>
+            </div>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">4. Decorator</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">Open-Close Principle</div>
+                    <div class="pattern-example"><strong>Example:</strong> Coffee with Different Ingredients, Man with shirt and coat on top</div>
+                    <pre class="pattern-code">protocol Coffee {
+    func cost() -> Double
+    func description() -> String
+}
+
+class SimpleCoffee: Coffee {
+    func cost() -> Double { 5.0 }
+    func description() -> String { "Simple coffee" }
+}
+
+class MilkDecorator: Coffee {
+    private let coffee: Coffee
+    init(_ coffee: Coffee) { self.coffee = coffee }
+    func cost() -> Double { coffee.cost() + 2.0 }
+    func description() -> String { coffee.description() + ", milk" }
+}
+
+class SugarDecorator: Coffee {
+    private let coffee: Coffee
+    init(_ coffee: Coffee) { self.coffee = coffee }
+    func cost() -> Double { coffee.cost() + 0.5 }
+    func description() -> String { coffee.description() + ", sugar" }
+}
+
+// Usage
+var coffee: Coffee = SimpleCoffee()
+coffee = MilkDecorator(coffee)
+coffee = SugarDecorator(coffee)
+print(coffee.description())  // Simple coffee, milk, sugar
+print(coffee.cost())         // 7.5</pre>
+                </div>
+            </div>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">5. Facade</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">Hide internal logic</div>
+                    <div class="pattern-example"><strong>Example:</strong> Plumbing, Electrical System. Show turn on/off. JS package shows only function we can use not logic</div>
+                    <pre class="pattern-code">class Amplifier { func on() { print("Amp on") } }
+class Projector { func on() { print("Projector on") } }
+class Lights { func dim() { print("Lights dimmed") } }
+
+class HomeTheaterFacade {
+    let amp = Amplifier()
+    let projector = Projector()
+    let lights = Lights()
+    
+    func watchMovie() {
+        lights.dim()
+        projector.on()
+        amp.on()
+        print("Movie starting...")
+    }
+}
+
+// Usage
+let theater = HomeTheaterFacade()
+theater.watchMovie()</pre>
+                </div>
+            </div>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">6. Flyweight</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">Use for create same obj multiple times. Reusing cached data. (intrinsic state (duplicate data), extrinsic state(same data))</div>
+                    <div class="pattern-example"><strong>Example:</strong> Game objs, Multi Rect color, size</div>
+                    <pre class="pattern-code">class TreeType {
+    let name: String
+    let color: String
+    
+    init(name: String, color: String) {
+        self.name = name
+        self.color = color
+    }
+    
+    func draw(x: Int, y: Int) {
+        print("Draw \(color) \(name) at (\(x), \(y))")
+    }
+}
+
+class TreeFactory {
+    static var types = [String: TreeType]()
+    
+    static func getTreeType(name: String, color: String) -> TreeType {
+        let key = name + color
+        if let existing = types[key] { return existing }
+        let new = TreeType(name: name, color: color)
+        types[key] = new
+        return new
+    }
+}
+
+class Tree {
+    let x, y: Int
+    let type: TreeType
+    
+    init(x: Int, y: Int, type: TreeType) {
+        self.x = x
+        self.y = y
+        self.type = type
+    }
+    
+    func draw() { type.draw(x: x, y: y) }
+}
+
+// Usage
+let oakType = TreeFactory.getTreeType(name: "Oak", color: "Green")
+let tree1 = Tree(x: 10, y: 20, type: oakType)
+let tree2 = Tree(x: 30, y: 40, type: oakType)
+tree1.draw()
+tree2.draw()</pre>
+                </div>
+            </div>
+
+            <div class="pattern">
+                <div class="pattern-header" onclick="togglePattern(this)">
+                    <div class="pattern-name">7. Proxy</div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="pattern-content">
+                    <div class="pattern-desc">Substitute, Update object when data changes</div>
+                    <div class="pattern-example"><strong>Example:</strong> SwiftUI View, Lazy loading</div>
+                    <pre class="pattern-code">protocol Image {
+    func display()
+}
+
+class RealImage: Image {
+    let filename: String
+    
+    init(filename: String) {
+        self.filename = filename
+        loadFromDisk()
+    }
+    
+    private func loadFromDisk() { print("Loading \(filename)") }
+    
+    func display() { print("Displaying \(filename)") }
+}
+
+class ProxyImage: Image {
+    private var realImage: RealImage?
+    let filename: String
+    
+    init(filename: String) { self.filename = filename }
+    
+    func display() {
+        if realImage == nil {
+            realImage = RealImage(filename: filename)
+        }
+        realImage?.display()
+    }
+}
+
+// Usage
+let image: Image = ProxyImage(filename: "photo.jpg")
+image.display()  // Loads and displays
+image.display()  // Only displays (already loaded)</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePattern(header) {
+            const icon = header.querySelector('.toggle-icon');
+            const content = header.nextElementSibling;
+            const codeBlock = content.querySelector('.pattern-code');
+
+            if (codeBlock.style.display === 'block') {
+                codeBlock.style.display = 'none';
+                icon.classList.remove('rotated');
+            } else {
+                codeBlock.style.display = 'block';
+                icon.classList.add('rotated');
+            }
+        }
+    </script>
+</body>
+</html>
